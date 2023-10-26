@@ -80,13 +80,18 @@ class RecipeViewSet(ModelViewSet, CreateDestroyM2MMixin):
     @action(detail=True, serializer_class=ShoppingCartSerializer,
             methods=('POST', 'DELETE'), permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, *args, **kwargs):
-        return self.create_destroy_m2m(
-            ShoppingCart,
-            ShortRecipeSerializer,
-            'user',
+        if request.method == 'POST':
+            return self.create_m2m(
+                ShortRecipeSerializer,
+                'user',
+                'shopping_carts',
+                'recipe',
+                'Рецепт уже находится в корзине',
+            )
+        return self.destroy_m2m(
+            'shopping_carts',
             'recipe',
             Recipe,
-            'Рецепт уже находится в корзине',
             'Рецепт не находится в корзине'
         )
 
@@ -119,13 +124,18 @@ class RecipeViewSet(ModelViewSet, CreateDestroyM2MMixin):
     @action(detail=True, serializer_class=FavoriteSerializer,
             methods=('POST', 'DELETE'), permission_classes=(IsAuthenticated,))
     def favorite(self, request, *args, **kwargs):
-        return self.create_destroy_m2m(
-            Favorite,
-            ShortRecipeSerializer,
-            'user',
+        if request.method == 'POST':
+            return self.create_m2m(
+                ShortRecipeSerializer,
+                'user',
+                'favorites',
+                'recipe',
+                'Рецепт уже находится в избранном',
+            )
+        return self.destroy_m2m(
+            'favorites',
             'recipe',
             Recipe,
-            'Рецепт уже находится в избранном',
             'Рецепт не находится в избранном'
         )
 
@@ -149,13 +159,18 @@ class CustomUserViewSet(UserViewSet, CreateDestroyM2MMixin):
             permission_classes=(IsAuthenticatedOrReadOnly,),
             methods=('POST', 'DELETE'))
     def subscribe(self, request, *args, **kwargs):
-        return self.create_destroy_m2m(
-            Follow,
-            FollowUserSerializer,
+        if request.method == 'POST':
+            return self.create_m2m(
+                FollowUserSerializer,
+                'follower',
+                'follower',
+                'author',
+                'Вы уже подписаны на этого автора'
+            )
+        return self.destroy_m2m(
             'follower',
             'author',
             CustomUser,
-            'Вы уже подписаны на этого автора',
             'Вы ещё не подписаны на этого автора'
         )
 

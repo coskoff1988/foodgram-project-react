@@ -63,7 +63,7 @@ docker-compose exec backend python manage.py collectstatic
 
 ## Данные для проверки работы проекта
 
-- ip: 51.250.19.172
+- ip: 51.250.19.172:9080
 - login: admin@mail.ru
 - password: admin
 

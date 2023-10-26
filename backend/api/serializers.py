@@ -3,6 +3,12 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from backend.constants import (
+    MIN_AMOUNT_VALUE,
+    MAX_AMOUNT_VALUE,
+    MIN_COOKING_TIME_VALUE,
+    MAX_COOKING_TIME_VALUE
+)
 from recipes.models import (
     Tag,
     Ingredient,
@@ -91,6 +97,11 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class IngredientToRecipeWriteSerializer(IngredientToRecipeSerializer):
+    amount = serializers.IntegerField(
+        min_value=MIN_AMOUNT_VALUE,
+        max_value=MAX_AMOUNT_VALUE
+    )
+
     class Meta:
         model = IngredientToRecipe
         fields = ('id', 'amount')
@@ -99,20 +110,15 @@ class IngredientToRecipeWriteSerializer(IngredientToRecipeSerializer):
 class RecipeWriteSerializer(serializers.ModelSerializer):
     ingredients = IngredientToRecipeWriteSerializer(many=True)
     image = Base64ImageField()
+    cooking_time = serializers.IntegerField(
+        min_value=MIN_COOKING_TIME_VALUE,
+        max_value=MAX_COOKING_TIME_VALUE
+    )
 
     class Meta:
         model = Recipe
         fields = ('ingredients', 'tags', 'image', 'name', 'text',
                   'cooking_time')
-
-    def validate(self, attrs):
-        if not attrs.get('tags'):
-            raise ValidationError('Поле тегов не может быть пустым')
-        if not attrs.get('tags'):
-            raise ValidationError('Поле ингредиентов не может быть пустым')
-        if not attrs.get('image'):
-            raise ValidationError('Поле изображения не может быть пустым')
-        return attrs
 
     def validate_tags(self, value):
         if not value:
@@ -124,11 +130,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise ValidationError('Поле ингредиентов не может быть пустым')
-        pks = [
+        primary_keys = [
             ingredient_data['ingredient']['id']
             for ingredient_data in value
         ]
-        if len(pks) != len(set(pks)):
+        if len(primary_keys) != len(set(primary_keys)):
             raise ValidationError('Ингредиенты не могут повторяться')
         return value
 

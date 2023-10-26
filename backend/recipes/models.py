@@ -27,6 +27,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name[:MAX_STR_LENGTH]
@@ -48,6 +49,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ('name',)
 
 
 class Recipe(models.Model):
@@ -86,7 +88,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-pk',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name[:MAX_STR_LENGTH]
@@ -119,8 +121,14 @@ class IngredientToRecipe(models.Model):
         ]
     )
 
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецептах'
+        ordering = ('ingredient__name', 'recipe__name')
+
     def __str__(self):
-        return f'{self.recipe} - {self.ingredient}'
+        return (f'{self.recipe[:MAX_STR_LENGTH]} - '
+                f'{self.ingredient[:MAX_STR_LENGTH]}')
 
 
 class AbsractUserRecipe(models.Model):
@@ -147,6 +155,7 @@ class Favorite(AbsractUserRecipe):
         default_related_name = 'favorites'
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
+        ordering = ('recipe__name',)
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -160,6 +169,7 @@ class ShoppingCart(AbsractUserRecipe):
         default_related_name = 'shopping_carts'
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
+        ordering = ('recipe__name',)
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
