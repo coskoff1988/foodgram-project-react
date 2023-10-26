@@ -29,9 +29,10 @@ from api.serializers import (
 from recipes.models import (
     Tag,
     Ingredient,
-    Recipe, ShoppingCart, IngredientToRecipe, Favorite
+    Recipe,
+    IngredientToRecipe
 )
-from users.models import Follow, CustomUser
+from users.models import CustomUser
 
 
 class TagViewSet(ReadOnlyModelViewSet):
