@@ -127,8 +127,8 @@ class IngredientToRecipe(models.Model):
         ordering = ('ingredient__name', 'recipe__name')
 
     def __str__(self):
-        return (f'{self.recipe[:MAX_STR_LENGTH]} - '
-                f'{self.ingredient[:MAX_STR_LENGTH]}')
+        return (f'{self.recipe.name[:MAX_STR_LENGTH]} - '
+                f'{self.ingredient.name[:MAX_STR_LENGTH]}')
 
 
 class AbsractUserRecipe(models.Model):
@@ -147,7 +147,8 @@ class AbsractUserRecipe(models.Model):
         abstract = True
 
     def __str__(self):
-        return f'{self.user[:MAX_STR_LENGTH]} - {self.recipe[:MAX_STR_LENGTH]}'
+        return (f'{self.user.last_name[:MAX_STR_LENGTH]} - '
+                f'{self.recipe.name[:MAX_STR_LENGTH]}')
 
 
 class Favorite(AbsractUserRecipe):

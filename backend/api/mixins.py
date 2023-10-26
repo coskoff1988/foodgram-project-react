@@ -13,7 +13,7 @@ class CreateDestroyM2MMixin:
             lookup_field_name: self.kwargs['pk']
         })
         serializer.is_valid(raise_exception=True)
-        if getattr(self.request.user, user_related_name)(
+        if getattr(self.request.user, user_related_name).filter(
                 **{lookup_field_name: self.get_object()}
         ).exists():
             raise ValidationError(create_error_message)
@@ -28,7 +28,7 @@ class CreateDestroyM2MMixin:
     def destroy_m2m(self, user_related_name,
                     lookup_field_name, lookup_model,
                     destroy_error_message):
-        obj = getattr(self.request.user, user_related_name)(
+        obj = getattr(self.request.user, user_related_name).filter(
             **{lookup_field_name: get_object_or_404(
                 lookup_model,
                 pk=self.kwargs['pk']
