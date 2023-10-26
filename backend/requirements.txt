@@ -5,4 +5,4 @@ webcolors==1.11.1
 psycopg2-binary==2.9.3
 Pillow==10.1.0
 django-filter==2.3.0
-django-extra-fields==3.2.1
+drf-extra-fields==3.2.1
